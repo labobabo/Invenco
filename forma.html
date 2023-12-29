@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            background-image: url("forma2.png");
+            background-repeat: no-repeat;
+
+            background-size: cover;
+            /* Фиксировать изображение при прокрутке страницы */
+            background-attachment: fixed;
+            color:  yellow;
+            font-size: 18px;
+        }
+
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+  
+
+        input,
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 40px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th,
+        td {
+            padding: 10px;
+        }
+
+        form {
+            margin-top: 250px;
+        }
+        .section__header {
+    width: 100%;
+    max-width: 950px;
+    margin: 0 auto 50px;
+
+    text-align: center;
+}
+
+    </style>
+</head>
+
+<body>
+    <div class="section__header"> 
+    <h2>Форма инвентаризации сетевого оборудования</h2>
+</div>
+</div>
+    <form action="db.php" method="post" >
+        <label for="deviceNumber">Уникальный номер устройства:</label>
+        <input type="text" id="deviceNumber" name="deviceNumber" required pattern="\d+" maxlength="6" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+
+        <label for="deviceType">Тип устройства:</label>
+        <select id="deviceType" name="deviceType" required>
+            <option value="Маршрутизатор">Маршрутизатор</option>
+            <option value="Коммутатор">Коммутатор</option>
+            <option value="Брандмауэр">Брандмауэр</option>
+            <option value="Хаб">Хаб</option>
+            <option value="Точка доступа">Точка доступа</option>
+            <option value="Модем">Модем</option>
+            <option value="Патчкорд">Патчкорд</option>
+            <!-- Добавьте другие типы устройств по необходимости -->
+        </select>
+
+        <label for="deviceLocation">Местоположение устройства:</label>
+        <select id="deviceLocation" name="deviceLocation" required>
+            <option value="Кабинет 413">Кабинет 413</option>
+            <option value="Кабинет 219">Кабинет 219</option>
+            <option value="Тех. Отдел">Тех. Отдел</option>
+            <!-- Добавьте другие кабинеты по необходимости -->
+        </select>
+
+        <label for="deviceStatus">Статус устройства:</label>
+        <select id="deviceStatus" name="deviceStatus" required>
+            <option value="В работе">В работе</option>
+            <option value="Техническое обслуживание">Техническое обслуживание</option>
+            <option value="Неисправность">Неисправность</option>
+            <option value="В резерве">В резерве</option>
+            <!-- Добавьте другие статусы по необходимости -->
+        </select>
+
+        <button type="submit">Отправить данные</button>
+    </form>
+
+
+
+
+
+    <table id="data-table">
+        <thead>
+            <tr>
+                <th>Уникальный номер</th>
+                <th>Тип устройства</th>
+                <th>Местоположение</th>
+                <th>Статус</th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+            <!-- Таблица будет заполняться данными после отправки формы -->
+        </tbody>
+    </table>
+
+    <script>
+        function fetchDataAndPopulateTable() {
+            fetch('db-get.php')
+                .then(response => response.json())
+                .then(data => {
+                    // Очищаем текущие данные в таблице
+                    var tableBody = document.getElementById('table-body');
+                    tableBody.innerHTML = '';
+
+                    // Заполняем таблицу данными из базы данных
+                    data.forEach(rowData => {
+                        var newRow = document.createElement('tr');
+                        newRow.innerHTML = '<td>' + rowData.id + '</td>' +
+                            '<td>' + rowData.type + '</td>' +
+                            '<td>' + rowData.place + '</td>' +
+                            '<td>' + rowData.status + '</td>';
+                        tableBody.appendChild(newRow);
+                    });
+                })
+                .catch(error => {
+                    console.error('Произошла ошибка при получении данных:', error);
+                });
+        }
+
+        // Вызываем функцию при загрузке страницы
+        fetchDataAndPopulateTable();
+
+    </script>
+</body>
+
+</html>
